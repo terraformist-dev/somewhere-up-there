@@ -72,6 +72,11 @@ call `Now.forget()` and `Reminders.schedule()`.
   non-waking exact RTC alarm (`USE_EXACT_ALARM`), so it never wakes the phone just to redraw.
 - **App** (`UpThereActivity` + `UpThereView`): redraws every 200 ms. Button toggles reminders;
   hidden during a pass (the view draws a hint instead).
+  Tapping the title opens the About card, a floating card like Somewhere to Nothing's: an invisible
+  `title_tap` view sits over the drawn title so the title itself looks unchanged. Card text is in
+  `strings.xml` (`about_*`); the "Look up." heading is dot-matrix (`DotTextView`), which is why
+  `DotFont.LARGE` has lower-case k, o, p, u. The owner asked for the "let the widget follow you"
+  background-location prompt to be removed; don't bring it back.
 - **Reminders** (`Reminders.kt`): off until tapped. Exact waking alarm 5 min before each visible
   pass; posts one notification; reschedules on boot, app pause, widget update and new orbit.
 - **Glyph Toy** (`UpThereToyService`, `MatrixArt`): live for 60 s after a Glyph Button touch or

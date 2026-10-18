@@ -20,22 +20,6 @@
         android:paddingEnd="24dp"
         android:paddingBottom="28dp">
 
-        <!-- Only shown while location is allowed just while the app is open. -->
-        <TextView
-            android:id="@+id/widget_help"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:gravity="center"
-            android:letterSpacing="0.1"
-            android:minHeight="48dp"
-            android:padding="12dp"
-            android:text="@string/widget_help"
-            android:textColor="#9A9A9A"
-            android:textSize="11sp"
-            android:visibility="gone" />
-
         <TextView
             android:id="@+id/remind"
             android:layout_width="match_parent"
@@ -49,4 +33,123 @@
             android:textColor="#000000"
             android:textSize="13sp" />
     </LinearLayout>
+
+    <!-- An invisible tap area over the drawn title. Placed in code to sit exactly on it. -->
+    <View
+        android:id="@+id/title_tap"
+        android:layout_width="200dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|center_horizontal"
+        android:clickable="true"
+        android:contentDescription="@string/about_open"
+        android:focusable="true" />
+
+    <!-- About: a card over the dimmed screen. Tap outside it, OK, or Back to close. -->
+    <FrameLayout
+        android:id="@+id/about_scrim"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#B3000000"
+        android:clickable="true"
+        android:contentDescription="@string/about_close"
+        android:focusable="false"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/about_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/card_bg"
+            android:clickable="true"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <dev.terraformist.upthere.DotTextView
+                    android:id="@+id/about_headline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:importantForAccessibility="yes" />
+
+                <dev.terraformist.upthere.MiniPassView
+                    android:layout_width="44dp"
+                    android:layout_height="36dp"
+                    android:importantForAccessibility="no" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/about_line1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:lineSpacingMultiplier="1.3"
+                android:text="@string/about_line1"
+                android:textColor="#F2F2F2"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/about_line2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:lineSpacingMultiplier="1.3"
+                android:text="@string/about_line2"
+                android:textColor="#F2F2F2"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/about_tips"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:letterSpacing="0.1"
+                android:lineSpacingMultiplier="1.4"
+                android:text="@string/about_tips"
+                android:textColor="#9A9A9A"
+                android:textSize="10sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/about_signoff"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:layout_weight="1"
+                    android:text="@string/about_signoff"
+                    android:textColor="#9A9A9A"
+                    android:textSize="11sp" />
+
+                <TextView
+                    android:id="@+id/about_ok"
+                    android:layout_width="wrap_content"
+                    android:layout_height="44dp"
+                    android:background="@drawable/button_pill"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:letterSpacing="0.12"
+                    android:minWidth="72dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:text="@string/about_ok"
+                    android:textColor="#000000"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
 </FrameLayout>

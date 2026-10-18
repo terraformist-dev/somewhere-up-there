@@ -5,6 +5,13 @@
     <string name="widget_wide_description">Countdown, time and where the ISS will rise</string>
     <string name="toy_name">Somewhere Up There</string>
     <string name="toy_summary">Points at the ISS. Long-press for the time to its next visible pass.</string>
-    <string name="widget_help">LET THE WIDGET FOLLOW YOU WHEN YOU TRAVEL</string>
     <string name="remind">REMIND ME 5 MIN BEFORE</string>
+    <string name="about_open">What is this app?</string>
+    <string name="about_close">Close</string>
+    <string name="about_headline">Look up.</string>
+    <string name="about_line1">A compass that points to the International Space Station, wherever it is right now.</string>
+    <string name="about_line2">It counts down to the next time it passes over you in a dark sky, and tells you where to look.</string>
+    <string name="about_tips">WIDGET: THE TOP IS NORTH\nGLYPH: LONG PRESS FOR THE TIME TO GO</string>
+    <string name="about_signoff">Made by a fan. Nothing to do with Nothing, or NASA.</string>
+    <string name="about_ok">OK</string>
 </resources>

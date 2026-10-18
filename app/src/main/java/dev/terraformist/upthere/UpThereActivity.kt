@@ -12,7 +12,11 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.view.View
+import android.view.accessibility.AccessibilityEvent
+import android.widget.FrameLayout
 import android.widget.TextView
+import android.window.OnBackInvokedCallback
+import android.window.OnBackInvokedDispatcher
 
 /** The app itself: one screen, with a button for reminders. */
 class UpThereActivity : Activity() {
@@ -20,7 +24,6 @@ class UpThereActivity : Activity() {
     private lateinit var screen: UpThereView
     private lateinit var controls: View
     private lateinit var button: TextView
-    private lateinit var widgetHelp: TextView
 
     private lateinit var heading: Heading
     private var watcher: LocationListener? = null
@@ -41,10 +44,8 @@ class UpThereActivity : Activity() {
         screen = findViewById(R.id.screen)
         controls = findViewById(R.id.controls)
         button = findViewById(R.id.remind)
-        widgetHelp = findViewById(R.id.widget_help)
 
         button.typeface = Art.typeface(this, isBold = true)
-        widgetHelp.typeface = Art.typeface(this, isBold = false)
 
         heading = Heading(this, Facing.SCREEN) {
             screen.heading = it
@@ -56,9 +57,63 @@ class UpThereActivity : Activity() {
             screen.invalidate()
         }
         button.setOnClickListener { onButton() }
-        widgetHelp.setOnClickListener {
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION), ASK_BACKGROUND)
+        setUpAbout()
+    }
+
+    // ---------- About card (tap the title) ----------
+
+    private lateinit var aboutScrim: View
+    private val closeAboutOnBack = OnBackInvokedCallback { hideAbout() }
+
+    private fun setUpAbout() {
+        aboutScrim = findViewById(R.id.about_scrim)
+        val titleTap = findViewById<View>(R.id.title_tap)
+
+        val regular = Art.typeface(this, isBold = false)
+        for (id in intArrayOf(R.id.about_line1, R.id.about_line2, R.id.about_tips, R.id.about_signoff)) {
+            findViewById<TextView>(id).typeface = regular
         }
+        findViewById<TextView>(R.id.about_ok).typeface = Art.typeface(this, isBold = true)
+        findViewById<DotTextView>(R.id.about_headline).text = getString(R.string.about_headline)
+
+        // Keep the invisible tap area sitting exactly on the drawn title, whatever the screen size.
+        screen.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            val minHeight = 48f * resources.displayMetrics.density
+            val width = (screen.titleWidth() + 32f * resources.displayMetrics.density).toInt()
+            val params = titleTap.layoutParams as FrameLayout.LayoutParams
+            val top = (screen.titleCenterY() - minHeight / 2f).toInt().coerceAtLeast(0)
+            if (params.width != width || params.topMargin != top) {
+                params.width = width
+                params.height = minHeight.toInt()
+                params.topMargin = top
+                // Not during this layout pass: on the next frame.
+                titleTap.post { titleTap.layoutParams = params }
+            }
+        }
+
+        titleTap.setOnClickListener { showAbout() }
+        aboutScrim.setOnClickListener { hideAbout() }
+        findViewById<View>(R.id.about_ok).setOnClickListener { hideAbout() }
+    }
+
+    private fun showAbout() {
+        if (aboutScrim.visibility == View.VISIBLE) return
+        aboutScrim.alpha = 0f
+        aboutScrim.visibility = View.VISIBLE
+        aboutScrim.animate().alpha(1f).setDuration(160L).start()
+        onBackInvokedDispatcher.registerOnBackInvokedCallback(
+            OnBackInvokedDispatcher.PRIORITY_DEFAULT,
+            closeAboutOnBack,
+        )
+        findViewById<View>(R.id.about_headline).sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+    }
+
+    private fun hideAbout() {
+        if (aboutScrim.visibility != View.VISIBLE) return
+        onBackInvokedDispatcher.unregisterOnBackInvokedCallback(closeAboutOnBack)
+        aboutScrim.animate().alpha(0f).setDuration(120L).withEndAction {
+            aboutScrim.visibility = View.GONE
+        }.start()
     }
 
     override fun onResume() {
@@ -129,9 +184,6 @@ class UpThereActivity : Activity() {
         val dark = on && s.stage != Stage.NO_PERMISSION
         button.setBackgroundResource(if (dark) R.drawable.button_pill_dark else R.drawable.button_pill)
         button.setTextColor(if (dark) Art.WHITE else Art.BLACK)
-
-        val allowed = Where.hasLocation(this)
-        widgetHelp.visibility = if (allowed && !Where.hasBackground(this)) View.VISIBLE else View.GONE
     }
 
     private fun onButton() {
@@ -172,7 +224,6 @@ class UpThereActivity : Activity() {
 
     private companion object {
         const val ASK_LOCATION = 1
-        const val ASK_BACKGROUND = 2
         const val ASK_NOTIFY = 3
     }
 }

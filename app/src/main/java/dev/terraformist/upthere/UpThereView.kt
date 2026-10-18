@@ -30,6 +30,14 @@ class UpThereView @JvmOverloads constructor(
     /** Pixels at the bottom covered by the buttons. */
     var bottomSpace = 0f
 
+    /** Where the title sits (centre and width, in this view's pixels), so a tap area can be put on it. */
+    fun titleCenterY(): Float {
+        val u = width / 390f
+        return 40f * u + Art.capHeight(context, 11f * u) / 2f
+    }
+
+    fun titleWidth(): Float = Art.textWidth(context, TITLE, 11f * (width / 390f))
+
     override fun onDraw(canvas: Canvas) {
         canvas.drawColor(Art.BLACK)
         val s = situation ?: return
