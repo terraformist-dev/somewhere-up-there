@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    android:fitsSystemWindows="true">
+
+    <dev.terraformist.upthere.UpThereView
+        android:id="@+id/screen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="28dp">
+
+        <!-- Only shown while location is allowed just while the app is open. -->
+        <TextView
+            android:id="@+id/widget_help"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:letterSpacing="0.1"
+            android:minHeight="48dp"
+            android:padding="12dp"
+            android:text="@string/widget_help"
+            android:textColor="#9A9A9A"
+            android:textSize="11sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/remind"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@drawable/button_pill"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:letterSpacing="0.12"
+            android:text="@string/remind"
+            android:textColor="#000000"
+            android:textSize="13sp" />
+    </LinearLayout>
+</FrameLayout>

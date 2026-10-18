@@ -1,0 +1,65 @@
+name: Build app
+
+# Runs every time code is pushed to main, or when you tap "Run workflow" on GitHub.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      # Pack today's ISS orbit into the app, so a fresh install works before it's been online.
+      # If CelesTrak can't be reached, the build carries on and the app downloads it on first open.
+      - name: Fetch the ISS orbit
+        run: |
+          if curl -fsS -m 30 -A "SomewhereUpThere-build" \
+              "https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=TLE" -o iss.tle \
+              && grep -q "^1 25544" iss.tle; then
+            mv iss.tle app/src/main/assets/iss.tle
+            cat app/src/main/assets/iss.tle
+          else
+            echo "::warning::Couldn't fetch the ISS orbit; the app will download it on first open."
+          fi
+
+      - name: Build the app
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace 2>&1 | tee build.log
+          status=${PIPESTATUS[0]}
+          if [ $status -ne 0 ]; then
+            grep -E "^e: |error:|What went wrong" build.log | head -20 | sed 's/^/::error::/'
+            exit $status
+          fi
+
+      - name: Name the file
+        run: cp app/build/outputs/apk/debug/app-debug.apk somewhere-up-there.apk
+
+      - name: Keep a copy with this run
+        uses: actions/upload-artifact@v4
+        with:
+          name: somewhere-up-there-apk
+          path: somewhere-up-there.apk
+
+      - name: Publish as the latest download
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "build-${{ github.run_number }}" somewhere-up-there.apk \
+            --target "${{ github.sha }}" \
+            --title "Somewhere Up There · build ${{ github.run_number }}" \
+            --notes "Tap **somewhere-up-there.apk** below to download, then open it to install." \
+            --latest

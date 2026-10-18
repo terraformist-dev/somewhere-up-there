@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Where you are, to work out when the ISS passes over you. A rough position is enough. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Optional: lets the widget follow you when you travel, without opening the app -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!-- To download the ISS's latest orbit, about twice a day -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Pass reminders, five minutes before -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- On-time reminders, and the widget countdown ticking each minute -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+
+    <!-- Set reminders again after the phone restarts -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Lets the app draw on the Glyph Matrix -->
+    <uses-permission android:name="com.nothing.ketchum.permission.ENABLE" />
+
+    <!-- Keeps the Glyph Toy live for a minute after you touch the Glyph Button -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
+
+        <activity
+            android:name=".UpThereActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Home-screen widget, 2×2 -->
+        <receiver
+            android:name=".UpThereWidget$Small"
+            android:exported="false"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_small_info" />
+        </receiver>
+
+        <!-- Home-screen widget, 4×2 -->
+        <receiver
+            android:name=".UpThereWidget$Wide"
+            android:exported="false"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_wide_info" />
+        </receiver>
+
+        <receiver
+            android:name=".ReminderReceiver"
+            android:exported="false" />
+
+        <receiver
+            android:name=".BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Glyph Toy for the Glyph Matrix on the back -->
+        <service
+            android:name=".UpThereToyService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.nothing.glyph.TOY" />
+            </intent-filter>
+            <meta-data
+                android:name="com.nothing.glyph.toy.name"
+                android:resource="@string/toy_name" />
+            <meta-data
+                android:name="com.nothing.glyph.toy.image"
+                android:resource="@drawable/toy_preview" />
+            <meta-data
+                android:name="com.nothing.glyph.toy.summary"
+                android:resource="@string/toy_summary" />
+            <meta-data
+                android:name="com.nothing.glyph.toy.introduction"
+                android:value="dev.terraformist.upthere.UpThereActivity" />
+            <meta-data
+                android:name="com.nothing.glyph.toy.longpress"
+                android:value="1" />
+            <meta-data
+                android:name="com.nothing.glyph.toy.aod_support"
+                android:value="1" />
+        </service>
+    </application>
+</manifest>
