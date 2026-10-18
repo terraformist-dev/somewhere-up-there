@@ -52,6 +52,9 @@ class UpThereToyService : Service() {
     private var timeUntil = 0L
     private var alwaysOn = false
 
+    /** When the switch-on started (0 = not playing). */
+    private var introAt = 0L
+
     private val tick = object : Runnable {
         override fun run() {
             val now = System.currentTimeMillis()
@@ -116,6 +119,7 @@ class UpThereToyService : Service() {
                 Where.last(applicationContext)?.let { heading.setLocation(it) }
                 Where.refresh(applicationContext) { location -> location?.let { heading.setLocation(it) } }
                 OrbitData.refreshIfDue(applicationContext) { changed -> if (changed) Now.forget() }
+                introAt = System.currentTimeMillis()
                 liveFor(LIVE_MS)
             }
 
@@ -180,13 +184,17 @@ class UpThereToyService : Service() {
         val manager = matrix ?: return
         if (!connected) return
         // Without a compass reading yet, the top of the matrix stands for north.
-        val grid = MatrixArt.render(
+        var grid = MatrixArt.render(
             Now.situation(applicationContext, now),
             heading.degrees,
             showTime = now < timeUntil,
             still = still,
             dim = alwaysOn,
         )
+        // The switch-on plays once each time this toy is picked.
+        if (introAt != 0L) {
+            if (now - introAt < MatrixArt.INTRO_MS && !still) grid = MatrixArt.intro(now - introAt, grid) else introAt = 0L
+        }
         val frame = IntArray(GlyphShape.SIZE * GlyphShape.SIZE) { i ->
             val x = i % GlyphShape.SIZE
             val y = i / GlyphShape.SIZE

@@ -126,6 +126,62 @@ object MatrixArt {
         grid.set(x, y, (255 * pulse(now, 800L, still)).toInt())
     }
 
+    // ---------- Switch-on ----------
+
+    /** How long the switch-on lasts. */
+    const val INTRO_MS = 1_200L
+    private const val PASS_MS = 850L
+    private const val HORIZON_ROW = 19
+    private const val ARC_RADIUS = 10.0
+
+    /**
+     * The switch-on, played once when this toy is picked, so it's easy to tell apart from the
+     * other Somewhere toys (Nothing's dissolve-and-shoot, Someone's heartbeat): a faint horizon
+     * appears and a bright dot rises over it, arcs across the sky with a fading trail and sets
+     * on the other side, like a pass. Then the trail fades out as the normal picture ([after])
+     * fades in.
+     */
+    fun intro(elapsed: Long, after: DotGrid): DotGrid {
+        val grid = DotGrid(GlyphShape.SIZE, GlyphShape.SIZE)
+        val t = elapsed.coerceAtLeast(0L)
+        // After the pass, everything from the intro fades while the real picture comes up.
+        val fade = ((t - PASS_MS).toDouble() / (INTRO_MS - PASS_MS)).coerceIn(0.0, 1.0)
+        val keep = 1.0 - fade
+
+        // The horizon: a faint line of dots.
+        for (x in 0 until GlyphShape.SIZE) {
+            if (GlyphShape.contains(x, HORIZON_ROW)) grid.lift(x, HORIZON_ROW, (45 * keep).toInt())
+        }
+
+        // The dot and its trail, from the left end of the horizon, over the top, to the right end.
+        val p = smooth(t.toDouble() / PASS_MS)
+        for (back in 0..9) {
+            val q = p - back * 0.035
+            if (q < 0) break
+            val (x, y) = arcCell(q)
+            val level = if (back == 0) 255 else (190 - back * 18)
+            grid.lift(x, y, (level * keep).toInt())
+        }
+
+        if (fade > 0) {
+            for (k in after.levels.indices) {
+                grid.lift(k % GlyphShape.SIZE, k / GlyphShape.SIZE, (after.levels[k] * fade).toInt())
+            }
+        }
+        return grid
+    }
+
+    /** A point [q] (0..1) along the pass arc: a half circle standing on the horizon. */
+    private fun arcCell(q: Double): Pair<Int, Int> {
+        val a = PI * q.coerceIn(0.0, 1.0)
+        return (C - ARC_RADIUS * cos(a)).roundToInt() to (HORIZON_ROW - ARC_RADIUS * sin(a)).roundToInt()
+    }
+
+    private fun smooth(t: Double): Double {
+        val c = t.coerceIn(0.0, 1.0)
+        return c * c * (3 - 2 * c)
+    }
+
     /** 0.3..1, smoothly, once per [period]. Always 1 for a still frame. */
     private fun pulse(now: Long, period: Long, still: Boolean): Double {
         if (still) return 1.0

@@ -82,6 +82,11 @@ call `Now.forget()` and `Reminders.schedule()`.
 - **Glyph Toy** (`UpThereToyService`, `MatrixArt`): live for 60 s after a Glyph Button touch or
   while the screen is on, then a still frame. Long-press shows time to go for 4 s (h:mm waiting,
   m:ss in the final hour and during a pass, "6D" quiet). `Facing.BACK`.
+- **Glyph switch-on** (`MatrixArt.intro`, 1.2 s, once each time the toy is picked): a faint
+  horizon line, a bright dot rising over it and arcing across like a pass with a fading trail,
+  then a crossfade into the normal picture. The owner wants each Somewhere toy to have its own
+  switch-on so he can tell them apart while cycling: Nothing dissolves to a dot that shoots to
+  the edge, Someone has two dots meeting in a beating heart. Keep this one different from those.
 
 ## Glyph Matrix SDK 2.0 (same .aar as the sibling apps)
 
