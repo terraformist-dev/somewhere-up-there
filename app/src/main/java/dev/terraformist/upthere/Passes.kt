@@ -20,6 +20,12 @@ data class Pass(
     val endAzimuth: Double get() = track.last().azimuth
     val durationMs: Long get() = end - start
 
+    /**
+     * True if it comes into view high in the sky (out of the Earth's shadow) rather than near
+     * the horizon: then the screens say "APPEARS" instead of "RISES", with how high to look.
+     */
+    val startsHigh: Boolean get() = track.first().elevation > 15.0
+
     /** Where it is at [millis] during the pass, smoothly between track points. */
     fun at(millis: Long): TrackPoint {
         if (millis <= track.first().millis) return track.first()

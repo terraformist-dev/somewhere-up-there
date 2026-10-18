@@ -320,11 +320,11 @@ object Art {
             Stage.WAITING -> Card(
                 Words.hoursMinutes(s.untilMs), "H",
                 "NEXT PASS · ${Words.whenShort(p!!.start, s.now)}",
-                "RISES ${Geo.cardinal(p.startAzimuth)}", true,
+                Words.rises(p), true,
             )
             Stage.SOON -> Card(
                 Words.minutesUp(s.untilMs).toString(), "MIN",
-                "RISES ${Geo.cardinal(p!!.startAzimuth)}",
+                Words.rises(p!!),
                 "${Words.height(p.maxElevation)} HIGH · ${Words.length(p)} LONG", true,
             )
             Stage.OVERHEAD -> {

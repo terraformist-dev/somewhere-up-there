@@ -28,6 +28,9 @@ purpose) so updates install over the old app. Don't change the key or applicatio
   ISS is sunlit. Coarse 60 s scan for above-horizon spans, then 5 s steps inside them. Pass start
   and end are the visible stretch, not rise/set. 10 days ahead; ~40 ms on a laptop.
   Rise times matched Skyfield's 10° events within the 5 s step.
+- Many passes (e.g. pre-dawn in autumn) begin mid-sky as the ISS leaves the Earth's shadow.
+  When the visible start is above 15° (`Pass.startsHigh`), the words say "APPEARS NNW 86° UP"
+  instead of "RISES NNW" (`Words.rises`), so nobody stares at the horizon.
 - To test: download `kotlin-compiler-2.0.21.zip` from JetBrains' GitHub releases, compile
   `Orbit.kt Sky.kt Passes.kt Geo.kt` with a small `main`, and compare with `pip install sgp4 skyfield`.
 

@@ -59,6 +59,14 @@ object Words {
     /** "6 MIN" */
     fun length(pass: Pass): String = "${(pass.durationMs / 60_000.0).roundToInt().coerceAtLeast(1)} MIN"
 
+    /** "RISES WSW", or "APPEARS NNW 86° UP" when it comes out of the shadow high in the sky. */
+    fun rises(pass: Pass): String =
+        if (pass.startsHigh) {
+            "APPEARS ${Geo.cardinal(pass.startAzimuth)} ${height(pass.track.first().elevation)} UP"
+        } else {
+            "RISES ${Geo.cardinal(pass.startAzimuth)}"
+        }
+
     /** "62°" */
     fun height(degrees: Double): String = "${degrees.roundToInt()}°"
 
@@ -77,7 +85,7 @@ object Words {
                     "${Geo.cardinal(it.azimuth)}. Gone by ${clock(p.end)}."
             }
             else -> "Next space station pass at ${whenLong(p!!.start, s.now).lowercase(Locale.UK)}, " +
-                "rising ${Geo.cardinal(p.startAzimuth)}, ${p.maxElevation.roundToInt()} degrees high."
+                (if (p.startsHigh) "appearing " else "rising ") + "${Geo.cardinal(p.startAzimuth)}, ${p.maxElevation.roundToInt()} degrees high."
         }
     }
 }

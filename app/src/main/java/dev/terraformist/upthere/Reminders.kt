@@ -86,14 +86,25 @@ object Reminders {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
         val minutes = (pass.durationMs / 60_000.0).roundToInt().coerceAtLeast(1)
-        val text = String.format(
-            Locale.UK,
-            "Rises %s at %s · %d° high · %d min long",
-            Geo.cardinal(pass.startAzimuth),
-            Words.clock(pass.start),
-            pass.maxElevation.roundToInt(),
-            minutes,
-        )
+        val text = if (pass.startsHigh) {
+            String.format(
+                Locale.UK,
+                "Appears %s, %d° up, at %s · %d min long",
+                Geo.cardinal(pass.startAzimuth),
+                pass.track.first().elevation.roundToInt(),
+                Words.clock(pass.start),
+                minutes,
+            )
+        } else {
+            String.format(
+                Locale.UK,
+                "Rises %s at %s · %d° high · %d min long",
+                Geo.cardinal(pass.startAzimuth),
+                Words.clock(pass.start),
+                pass.maxElevation.roundToInt(),
+                minutes,
+            )
+        }
         val notification = Notification.Builder(context, CHANNEL)
             .setSmallIcon(R.drawable.ic_notify)
             .setContentTitle("The ISS is coming over")

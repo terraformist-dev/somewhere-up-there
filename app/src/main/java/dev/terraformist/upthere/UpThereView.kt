@@ -91,7 +91,9 @@ class UpThereView @JvmOverloads constructor(
             val pitch = min(bigPitch, room / DotFont.LARGE.width(word))
             Art.dots(canvas, DotFont.LARGE, word, cx - Art.dotsWidth(DotFont.LARGE, word, pitch) / 2f, y, pitch)
             y += 7 * bigPitch + 16f * u
-            twoTone(canvas, "WHERE IT RISES", "${Math.round(pass.startAzimuth) % 360}°", cx, y, 12f * u, room)
+            val where = "${Math.round(pass.startAzimuth) % 360}°" +
+                if (pass.startsHigh) " · ${Words.height(pass.track.first().elevation)} UP" else ""
+            twoTone(canvas, if (pass.startsHigh) "WHERE IT APPEARS" else "WHERE IT RISES", where, cx, y, 12f * u, room)
         } else if (iss != null) {
             val d = Geo.format(iss.groundMeters)
             val unitSize = 18f * u
@@ -111,7 +113,7 @@ class UpThereView @JvmOverloads constructor(
 
         // The countdown.
         val label = when (s.stage) {
-            Stage.SOON -> "RISES IN"
+            Stage.SOON -> if (s.pass?.startsHigh == true) "APPEARS IN" else "RISES IN"
             Stage.NONE -> "NEXT PASS"
             else -> "NEXT PASS IN"
         }
