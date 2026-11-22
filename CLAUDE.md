@@ -77,8 +77,12 @@ call `Now.forget()` and `Reminders.schedule()`.
   `strings.xml` (`about_*`); the "Look up." heading is dot-matrix (`DotTextView`), which is why
   `DotFont.LARGE` has lower-case k, o, p, u. The owner asked for the "let the widget follow you"
   background-location prompt to be removed; don't bring it back.
-- **Reminders** (`Reminders.kt`): off until tapped. Exact waking alarm 5 min before each visible
-  pass; posts one notification; reschedules on boot, app pause, widget update and new orbit.
+- **Reminders** (`Reminders.kt`): off until tapped. One notification per pass, same slot (id 1):
+  a heads-up at 5 min, then "Look up" at 2 min (alerts again, live countdown chronometer to the
+  end of the pass), removed automatically at pass end via `setTimeoutAfter`. The owner asked for
+  the reminder to be temporary: there from 2 min before until the pass is over. Exact waking
+  alarms for each stage; `fire()` picks the stage from the clock so a delayed alarm still shows
+  the right one. Reschedules on boot, app pause, widget update and new orbit.
 - **Glyph Toy** (`UpThereToyService`, `MatrixArt`): live for 60 s after a Glyph Button touch or
   while the screen is on, then a still frame. Long-press shows time to go for 4 s (h:mm waiting,
   m:ss in the final hour and during a pass, "6D" quiet). `Facing.BACK`.
